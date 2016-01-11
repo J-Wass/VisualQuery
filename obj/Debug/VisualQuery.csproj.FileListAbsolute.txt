@@ -1,9 +1,0 @@
-C:\Users\jonah\Desktop\Dev\VisualQuery\VisualQuery\bin\Debug\VisualQuery.exe.config
-C:\Users\jonah\Desktop\Dev\VisualQuery\VisualQuery\bin\Debug\VisualQuery.exe
-C:\Users\jonah\Desktop\Dev\VisualQuery\VisualQuery\bin\Debug\VisualQuery.pdb
-C:\Users\jonah\Desktop\Dev\VisualQuery\VisualQuery\obj\Debug\VisualQuery.csprojResolveAssemblyReference.cache
-C:\Users\jonah\Desktop\Dev\VisualQuery\VisualQuery\obj\Debug\VisualQuery.Properties.Resources.resources
-C:\Users\jonah\Desktop\Dev\VisualQuery\VisualQuery\obj\Debug\VisualQuery.csproj.GenerateResource.Cache
-C:\Users\jonah\Desktop\Dev\VisualQuery\VisualQuery\obj\Debug\VisualQuery.exe
-C:\Users\jonah\Desktop\Dev\VisualQuery\VisualQuery\obj\Debug\VisualQuery.pdb
-C:\Users\jonah\Desktop\Dev\VisualQuery\VisualQuery\obj\Debug\VisualQuery.VisualQuery.resources

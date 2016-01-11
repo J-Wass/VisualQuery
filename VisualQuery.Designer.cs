@@ -30,13 +30,13 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(VisualQuery));
             this.gDatabases = new System.Windows.Forms.GroupBox();
+            this.bAdd = new System.Windows.Forms.Button();
             this.tDatabases = new System.Windows.Forms.TreeView();
             this.gMenu = new System.Windows.Forms.GroupBox();
             this.gConsole = new System.Windows.Forms.GroupBox();
             this.tInput = new System.Windows.Forms.RichTextBox();
             this.tConsole = new System.Windows.Forms.RichTextBox();
-            this.browserDiag = new System.Windows.Forms.FolderBrowserDialog();
-            this.bBrowse = new System.Windows.Forms.Button();
+            this.FileDialog = new System.Windows.Forms.OpenFileDialog();
             this.gDatabases.SuspendLayout();
             this.gConsole.SuspendLayout();
             this.SuspendLayout();
@@ -47,24 +47,37 @@
             | System.Windows.Forms.AnchorStyles.Left)));
             this.gDatabases.AutoSize = true;
             this.gDatabases.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.gDatabases.Controls.Add(this.bBrowse);
+            this.gDatabases.Controls.Add(this.bAdd);
             this.gDatabases.Controls.Add(this.tDatabases);
-            this.gDatabases.Location = new System.Drawing.Point(-2, 34);
+            this.gDatabases.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.gDatabases.Location = new System.Drawing.Point(-2, 41);
             this.gDatabases.Name = "gDatabases";
-            this.gDatabases.Padding = new System.Windows.Forms.Padding(20);
-            this.gDatabases.Size = new System.Drawing.Size(469, 848);
+            this.gDatabases.Padding = new System.Windows.Forms.Padding(20, 50, 20, 20);
+            this.gDatabases.Size = new System.Drawing.Size(472, 855);
             this.gDatabases.TabIndex = 0;
             this.gDatabases.TabStop = false;
             this.gDatabases.Text = "Databases";
+            // 
+            // bAdd
+            // 
+            this.bAdd.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.bAdd.Location = new System.Drawing.Point(349, 30);
+            this.bAdd.Name = "bAdd";
+            this.bAdd.Size = new System.Drawing.Size(100, 33);
+            this.bAdd.TabIndex = 1;
+            this.bAdd.Text = "Open";
+            this.bAdd.UseVisualStyleBackColor = true;
+            this.bAdd.Click += new System.EventHandler(this.bBrowse_Click);
             // 
             // tDatabases
             // 
             this.tDatabases.BackColor = System.Drawing.SystemColors.ButtonShadow;
             this.tDatabases.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tDatabases.Location = new System.Drawing.Point(20, 39);
+            this.tDatabases.Location = new System.Drawing.Point(20, 73);
             this.tDatabases.Name = "tDatabases";
-            this.tDatabases.Size = new System.Drawing.Size(429, 789);
+            this.tDatabases.Size = new System.Drawing.Size(432, 762);
             this.tDatabases.TabIndex = 0;
+            this.tDatabases.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tDatabases_AfterSelect);
             // 
             // gMenu
             // 
@@ -75,7 +88,7 @@
             this.gMenu.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.gMenu.Location = new System.Drawing.Point(-24, -16);
             this.gMenu.Name = "gMenu";
-            this.gMenu.Size = new System.Drawing.Size(1374, 61);
+            this.gMenu.Size = new System.Drawing.Size(1374, 69);
             this.gMenu.TabIndex = 1;
             this.gMenu.TabStop = false;
             // 
@@ -87,6 +100,7 @@
             this.gConsole.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.gConsole.Controls.Add(this.tInput);
             this.gConsole.Controls.Add(this.tConsole);
+            this.gConsole.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.gConsole.Location = new System.Drawing.Point(488, 627);
             this.gConsole.Name = "gConsole";
             this.gConsole.Padding = new System.Windows.Forms.Padding(20);
@@ -111,28 +125,20 @@
             this.tConsole.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.tConsole.Cursor = System.Windows.Forms.Cursors.Default;
             this.tConsole.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tConsole.Location = new System.Drawing.Point(20, 39);
+            this.tConsole.Location = new System.Drawing.Point(20, 43);
             this.tConsole.Name = "tConsole";
             this.tConsole.ReadOnly = true;
             this.tConsole.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            this.tConsole.Size = new System.Drawing.Size(797, 196);
+            this.tConsole.Size = new System.Drawing.Size(797, 192);
             this.tConsole.TabIndex = 0;
             this.tConsole.Text = "";
             // 
-            // browserDiag
+            // FileDialog
             // 
-            this.browserDiag.ShowNewFolderButton = false;
-            // 
-            // bBrowse
-            // 
-            this.bBrowse.AutoSize = true;
-            this.bBrowse.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.bBrowse.Location = new System.Drawing.Point(20, 788);
-            this.bBrowse.Name = "bBrowse";
-            this.bBrowse.Size = new System.Drawing.Size(429, 40);
-            this.bBrowse.TabIndex = 1;
-            this.bBrowse.Text = "Browse Directory for Databases";
-            this.bBrowse.UseVisualStyleBackColor = true;
+            this.FileDialog.FileName = "fileDialog";
+            this.FileDialog.Filter = "SQLite Database files|*.sqlite";
+            this.FileDialog.Multiselect = true;
+            this.FileDialog.Title = "Select SQLite database(s)";
             // 
             // VisualQuery
             // 
@@ -149,7 +155,6 @@
             this.Text = "Visual Query";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.gDatabases.ResumeLayout(false);
-            this.gDatabases.PerformLayout();
             this.gConsole.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -164,8 +169,8 @@
         private System.Windows.Forms.TreeView tDatabases;
         private System.Windows.Forms.RichTextBox tConsole;
         private System.Windows.Forms.RichTextBox tInput;
-        private System.Windows.Forms.Button bBrowse;
-        private System.Windows.Forms.FolderBrowserDialog browserDiag;
+        private System.Windows.Forms.Button bAdd;
+        private System.Windows.Forms.OpenFileDialog FileDialog;
     }
 }
 
