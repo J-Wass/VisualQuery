@@ -18,8 +18,11 @@ namespace VisualQuery
         {
             InitializeComponent();
             tInput.KeyPress += new KeyPressEventHandler(tInput_Enter);
+            tDatabases.NodeMouseClick += new TreeNodeMouseClickEventHandler(tDatabases_OnSelect);
         }
-        public string lastOpenedDB = "";
+
+        public Dictionary<string, SQLiteConnection> DBlist = new Dictionary<string, SQLiteConnection>();
+        public string currentDB = "";
 
         public static DialogResult InputBox(string title, string promptText, ref string value)
         {
@@ -105,6 +108,7 @@ namespace VisualQuery
             try
             {
                 SQLiteConnection conn = new SQLiteConnection("Data Source=" + db.Text + ".sqlite;Version=3;");
+                DBlist.Add(db.Text, conn);
                 foreach(string table in getTables(conn))
                 {
                     db.Nodes.Add(table);
@@ -123,6 +127,7 @@ namespace VisualQuery
                         try
                         {
                             SQLiteConnection conn = new SQLiteConnection("Data Source=" + db.Text + ".sqlite;Version=3;Password=" + password);
+                            DBlist[db.Text] = conn;
                             foreach (string table in getTables(conn))
                             {
                                 db.Nodes.Add(table);
@@ -171,13 +176,42 @@ namespace VisualQuery
             return ret.ToArray();
         }
 
-        //so the console knows where to send sql queries
-        private void tDatabases_AfterSelect(object sender, TreeViewEventArgs e)
+        private void tDatabases_OnSelect(object sender, TreeNodeMouseClickEventArgs e)
         {
-            //if a db is selected
-            if (tDatabases.SelectedNode.Parent == null)
+            if (e.Node == null) return;
+            //if a DB is selected
+            if (e.Node.Parent == null)
             {
-                lastOpenedDB = tDatabases.SelectedNode.Name;
+                currentDB = e.Node.Text;
+                gConsole.Text = "Console - " + currentDB;
+            }
+            //if a table is selected    
+            else
+            {
+                currentDB = e.Node.Parent.Text;
+                gConsole.Text = "Console - " + currentDB;
+                ShowTable(currentDB, e.Node.Text);
+            }
+        }
+
+        /// <summary>
+        /// Displays a table in the middle of the form
+        /// </summary>
+        /// <param name="targetDB"></param>
+        private void ShowTable(string targetDB, string targetTable)
+        {
+            SQLiteConnection conn;
+
+            //if we can get the connection that's still open from the targetDB
+            if(DBlist.TryGetValue(targetDB, out conn))
+            {
+                SQLiteCommand comm = new SQLiteCommand("SELECT * FROM " + targetTable, conn);
+                SQLiteDataReader reader = comm.ExecuteReader();
+                DataTable table = new DataTable(targetTable);
+                table.Load(reader);
+                TableView.DataSource = table;
+                TableView.Show();
+                TableView.ForeColor = Color.Black;
             }
         }
     }

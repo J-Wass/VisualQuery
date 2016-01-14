@@ -37,8 +37,10 @@
             this.tInput = new System.Windows.Forms.RichTextBox();
             this.tConsole = new System.Windows.Forms.RichTextBox();
             this.FileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.TableView = new System.Windows.Forms.DataGridView();
             this.gDatabases.SuspendLayout();
             this.gConsole.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.TableView)).BeginInit();
             this.SuspendLayout();
             // 
             // gDatabases
@@ -53,7 +55,7 @@
             this.gDatabases.Location = new System.Drawing.Point(-2, 41);
             this.gDatabases.Name = "gDatabases";
             this.gDatabases.Padding = new System.Windows.Forms.Padding(20, 50, 20, 20);
-            this.gDatabases.Size = new System.Drawing.Size(472, 855);
+            this.gDatabases.Size = new System.Drawing.Size(472, 923);
             this.gDatabases.TabIndex = 0;
             this.gDatabases.TabStop = false;
             this.gDatabases.Text = "Databases";
@@ -75,9 +77,8 @@
             this.tDatabases.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tDatabases.Location = new System.Drawing.Point(20, 73);
             this.tDatabases.Name = "tDatabases";
-            this.tDatabases.Size = new System.Drawing.Size(432, 762);
+            this.tDatabases.Size = new System.Drawing.Size(432, 830);
             this.tDatabases.TabIndex = 0;
-            this.tDatabases.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tDatabases_AfterSelect);
             // 
             // gMenu
             // 
@@ -88,7 +89,7 @@
             this.gMenu.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.gMenu.Location = new System.Drawing.Point(-24, -16);
             this.gMenu.Name = "gMenu";
-            this.gMenu.Size = new System.Drawing.Size(1374, 69);
+            this.gMenu.Size = new System.Drawing.Size(1524, 69);
             this.gMenu.TabIndex = 1;
             this.gMenu.TabStop = false;
             // 
@@ -101,10 +102,10 @@
             this.gConsole.Controls.Add(this.tInput);
             this.gConsole.Controls.Add(this.tConsole);
             this.gConsole.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.gConsole.Location = new System.Drawing.Point(488, 627);
+            this.gConsole.Location = new System.Drawing.Point(488, 695);
             this.gConsole.Name = "gConsole";
             this.gConsole.Padding = new System.Windows.Forms.Padding(20);
-            this.gConsole.Size = new System.Drawing.Size(837, 255);
+            this.gConsole.Size = new System.Drawing.Size(987, 255);
             this.gConsole.TabIndex = 2;
             this.gConsole.TabStop = false;
             this.gConsole.Text = "Console";
@@ -115,7 +116,7 @@
             this.tInput.Location = new System.Drawing.Point(20, 200);
             this.tInput.Name = "tInput";
             this.tInput.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
-            this.tInput.Size = new System.Drawing.Size(797, 35);
+            this.tInput.Size = new System.Drawing.Size(947, 35);
             this.tInput.TabIndex = 0;
             this.tInput.Text = "";
             // 
@@ -129,7 +130,7 @@
             this.tConsole.Name = "tConsole";
             this.tConsole.ReadOnly = true;
             this.tConsole.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            this.tConsole.Size = new System.Drawing.Size(797, 192);
+            this.tConsole.Size = new System.Drawing.Size(947, 192);
             this.tConsole.TabIndex = 0;
             this.tConsole.Text = "";
             // 
@@ -140,22 +141,40 @@
             this.FileDialog.Multiselect = true;
             this.FileDialog.Title = "Select SQLite database(s)";
             // 
+            // TableView
+            // 
+            this.TableView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.TableView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.TableView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+            this.TableView.BackgroundColor = System.Drawing.Color.White;
+            this.TableView.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.TableView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.TableView.Location = new System.Drawing.Point(537, 114);
+            this.TableView.Name = "TableView";
+            this.TableView.RowTemplate.Height = 28;
+            this.TableView.Size = new System.Drawing.Size(850, 515);
+            this.TableView.TabIndex = 3;
+            // 
             // VisualQuery
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.ClientSize = new System.Drawing.Size(1328, 894);
+            this.BackColor = System.Drawing.Color.White;
+            this.ClientSize = new System.Drawing.Size(1478, 962);
+            this.Controls.Add(this.TableView);
             this.Controls.Add(this.gDatabases);
             this.Controls.Add(this.gConsole);
             this.Controls.Add(this.gMenu);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MinimumSize = new System.Drawing.Size(1350, 950);
+            this.MinimumSize = new System.Drawing.Size(1500, 1018);
             this.Name = "VisualQuery";
             this.Text = "Visual Query";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.gDatabases.ResumeLayout(false);
             this.gConsole.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.TableView)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -171,6 +190,7 @@
         private System.Windows.Forms.RichTextBox tInput;
         private System.Windows.Forms.Button bAdd;
         private System.Windows.Forms.OpenFileDialog FileDialog;
+        private System.Windows.Forms.DataGridView TableView;
     }
 }
 

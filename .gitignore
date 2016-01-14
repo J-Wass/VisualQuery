@@ -1,4 +1,5 @@
 #Ignore files build by Visual Studio
+*.dll
 *.user
 *.aps
 *.pch
@@ -11,12 +12,16 @@
 *.cache
 *.ilk
 *.log
+[Pp]roperties
 [Bb]in
 [Dd]ebug*/
 *.sbr
 obj/
 [Rr]elease*/
 _ReSharper*/
+
+#Icons and stuff
+*.ico
 
 # Windows image file caches
 Thumbs.db
