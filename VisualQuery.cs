@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SQLite;
 
@@ -22,6 +19,7 @@ namespace VisualQuery
         }
 
         public Dictionary<string, SQLiteConnection> DBlist = new Dictionary<string, SQLiteConnection>();
+        public Dictionary<string, DataTable> TableList = new Dictionary<string, DataTable>();
         public string currentDB = "";
 
         public static DialogResult InputBox(string title, string promptText, ref string value)
@@ -190,29 +188,47 @@ namespace VisualQuery
             {
                 currentDB = e.Node.Parent.Text;
                 gConsole.Text = "Console - " + currentDB;
-                ShowTable(currentDB, e.Node.Text);
+                TableView.DataSource = GetTable(currentDB, e.Node.Text);
             }
         }
 
         /// <summary>
-        /// Displays a table in the middle of the form
+        /// Generates a DataTable from a DB and SQLite table
         /// </summary>
-        /// <param name="targetDB"></param>
-        private void ShowTable(string targetDB, string targetTable)
+        /// <returns>Formated datatable</returns>
+        private DataTable GetTable(string targetDB, string targetTable)
         {
             SQLiteConnection conn;
+            DataTable dt;
+
+            //if table was previously selected
+            if(TableList.TryGetValue(targetTable + targetDB, out dt))
+            {
+                return dt;
+            }
 
             //if we can get the connection that's still open from the targetDB
             if(DBlist.TryGetValue(targetDB, out conn))
             {
                 SQLiteCommand comm = new SQLiteCommand("SELECT * FROM " + targetTable, conn);
                 SQLiteDataReader reader = comm.ExecuteReader();
-                DataTable table = new DataTable(targetTable);
-                table.Load(reader);
-                TableView.DataSource = table;
-                TableView.Show();
-                TableView.ForeColor = Color.Black;
+                dt = new DataTable(targetTable);
+                dt.Load(reader);
+                TableList.Add(targetTable + targetDB, dt);
+                //TableView.DataSource = table;
             }
+
+            //Note: dt can possibly be null, although it shouldn't be
+            return dt;
+        }
+
+        private void tDatabases_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if (e.Node == null || e.Node.Parent == null) return;
+            //DetachTable(e.Node.Text, GetTable(e.Node.Parent.Text, e.Node.Text));
+            DataGrid dt = new DataGrid();
+            dt.Text = e.Node.Text;
+            dt.ShowGridView(GetTable(e.Node.Parent.Text, e.Node.Text));
         }
     }
 }
