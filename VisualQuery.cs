@@ -6,6 +6,8 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Data.SQLite;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace VisualQuery
 {
@@ -68,16 +70,39 @@ namespace VisualQuery
         {
             if (e.KeyChar == (char)Keys.Return && tInput.Focused)
             {
-                tConsole.AppendText(" " + tInput.Text);
-                tInput.Clear();
+                tConsole.AppendText(tInput.Text);
                 tConsole.ScrollToCaret();
                 handleConsole(tInput.Text);
+                tInput.Clear();
             }
         }
 
         private void handleConsole(string input)
         {
-            //todo: go command line af here
+            SQLiteConnection conn;
+            if (DBlist.TryGetValue(currentDB, out conn))
+            {
+                try
+                {
+                    SQLiteCommand comm = new SQLiteCommand(input, conn);
+                    if (input.ToLower().StartsWith("select"))
+                    {
+                        SQLiteDataReader reader = comm.ExecuteReader();
+                        DataTable dt = new DataTable(input);
+                        dt.Load(reader);
+                        TableView.DataSource = dt;
+                    }
+                    else
+                    {
+                        comm.ExecuteNonQuery();
+                    }
+                }
+                catch(Exception e)
+                {
+                    tConsole.AppendText(e.ToString());
+                    tConsole.ScrollToCaret();
+                }
+            }
         }
 
        private void bBrowse_Click(object sender, EventArgs e)
@@ -91,14 +116,15 @@ namespace VisualQuery
                 {
                     TreeNode tn = new TreeNode(Path.GetFileNameWithoutExtension(database));
                     tn = AuthAndExtract(tn);
-                    //add each table from the database to the treenode
+                    //add each database to the treenode
+                    tn.Name = tn.Text;
                     tDatabases.Nodes.Add(tn);
                 }
             }
         }
 
         /// <summary>
-        /// Authenticates a connection to a db and extracts the tables
+        /// Authenticates a connection to a db and extracts/connects its tables
         /// </summary>
         /// <returns></returns>
         private TreeNode AuthAndExtract(TreeNode db)
@@ -109,7 +135,7 @@ namespace VisualQuery
                 DBlist.Add(db.Text, conn);
                 foreach(string table in getTables(conn))
                 {
-                    db.Nodes.Add(table);
+                    db.Nodes.Add(table, table);
                 }              
             }
             catch(SQLiteException ex)
@@ -128,7 +154,7 @@ namespace VisualQuery
                             DBlist[db.Text] = conn;
                             foreach (string table in getTables(conn))
                             {
-                                db.Nodes.Add(table);
+                                db.Nodes.Add(table, table);
                             }
                         }
                         catch (SQLiteException e)
@@ -182,6 +208,10 @@ namespace VisualQuery
             {
                 currentDB = e.Node.Text;
                 gConsole.Text = "Console - " + currentDB;
+                TableView.DataSource = null;
+                lCurrentTable.Visible = false;
+                bRefresh.Visible = false;
+                bDetach.Visible = false;
             }
             //if a table is selected    
             else
@@ -189,6 +219,10 @@ namespace VisualQuery
                 currentDB = e.Node.Parent.Text;
                 gConsole.Text = "Console - " + currentDB;
                 TableView.DataSource = GetTable(currentDB, e.Node.Text);
+                lCurrentTable.Text = "Table: " + e.Node.Text;
+                lCurrentTable.Visible = true;
+                bRefresh.Visible = true;
+                bDetach.Visible = true;
             }
         }
 
@@ -229,6 +263,59 @@ namespace VisualQuery
             DataGrid dt = new DataGrid();
             dt.Text = e.Node.Text;
             dt.ShowGridView(GetTable(e.Node.Parent.Text, e.Node.Text));
+        }
+
+        /// <summary>
+        /// Refresh connection with DB and update table
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void bRefresh_Click(object sender, EventArgs e)
+        {
+            lStatus.Text = "Refreshing " + lCurrentTable.Text;
+            string currentTable = lCurrentTable.Text;
+            TableList.Remove(lCurrentTable.Text);
+            DBlist.Remove(currentDB);
+            TreeNode rm = tDatabases.Nodes[currentDB];
+            tDatabases.Nodes.Remove(rm);
+            //put the DB back in half a second
+            Task.Factory.StartNew(() =>
+            {
+                Thread.Sleep(500);
+                Invoke(new Action(() => ReAddDB()));
+            });
+        }
+
+        private void ReAddDB()
+        {
+            //redo it all
+            TreeNode tn = new TreeNode(Path.GetFileNameWithoutExtension(currentDB));
+            tn = AuthAndExtract(tn);
+            tn.Name = tn.Text;
+            tDatabases.Nodes.Add(tn);
+            tDatabases.SelectedNode = tn.Nodes[lCurrentTable.Text];
+            lStatus.Text = "Ready";
+            TableView.DataSource = GetTable(currentDB, currentDB);
+        }
+
+        private void bDetach_Click(object sender, EventArgs e)
+        {
+            DataGrid dt = new DataGrid();
+            dt.Text = lCurrentTable.Text;
+            dt.ShowGridView((DataTable)TableView.DataSource);
+        }
+
+        //drop and push the table back
+        private void bSave_Click(object sender, EventArgs e)
+        {
+            //might as well use sql style syntax for a sql program haha
+            var conn = from entry in DBlist where entry.Key == currentDB select entry.Value;
+            string table = lCurrentTable.Text;
+
+            //bouta finish this later
+            SQLiteCommand com = new SQLiteCommand("UPDATE " + table + " SET ");
+
+
         }
     }
 }
